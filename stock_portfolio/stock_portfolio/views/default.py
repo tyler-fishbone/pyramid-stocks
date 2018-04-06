@@ -1,16 +1,42 @@
 from pyramid.response import Response
 from pyramid.view import view_config
+from ..sample_data import MOCK_DATA
+from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 # from sqlalchemy.exc import DBAPIError
 # from ..models import MyModel
 
-@view_config(route_name='home', renderer='../templates/index.jinja2', request_method='GET')
+@view_config(route_name='base', renderer='../templates/base.jinja2', request_method='GET')
+def get_base_view(request):
+    return Response('base view is functional')
+
+@view_config(route_name='home', renderer='../templates/base.jinja2', request_method='GET')
 def get_home_view(request):
     return {}
+    # return Response('get_home_view is functional')
 
 
-@view_config(route_name='auth', renderer='../templates/auth.jinja2', request_method='GET')
+@view_config(route_name='auth', renderer='../templates/auth.jinja2')
 def get_auth_view(request):
-    return {}
+    if request.method == 'GET':
+        try:
+            username = request.GET['username']
+            password = request.GET['password']
+            print('User: {}, Pass: {}'.format(username, password))
+
+            return HTTPFound(location=request.route_url('portfolio'))
+
+        except KeyError:
+            return {}
+    
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        print('User: {}, Pass: {}, Email: {}'.format(username, password, email))
+
+        return HTTPFound(location=request.route_url('portfolio'))
+
+    return HTTPNotFound()
 
 
 @view_config(route_name='stock', renderer='../templates/stock-add.jinja2', request_method='GET')
@@ -20,27 +46,16 @@ def get_stock_add_view(request):
 
 @view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2', request_method='GET')
 def get_portfolio_view(request):
-    return {}
+    return {
+        'stocks' : MOCK_DATA,
+    }
 
 
-@view_config(route_name='portfolio/{symbol}', renderer='../templates/portfolio/{symbol}.jinja2', request_method='GET')
+@view_config(route_name='stock-detail', renderer='../templates/stock-detail.jinja2', request_method='GET')
 def get_portfolio_symbol_view(request):
+    stock = request.matchdict['symbol']
+    print('             {}'.format(stock))
+    for stock_item in MOCK_DATA:
+        if stock_item['symbol'] == stock:
+            return {'stock' : stock_item}
     return {}
-
-
-
-db_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
-
-1.  You may need to run the "initialize_stock_portfolio_db" script
-    to initialize your database tables.  Check your virtual
-    environment's "bin" directory for this script and try to run it.
-
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
-
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""

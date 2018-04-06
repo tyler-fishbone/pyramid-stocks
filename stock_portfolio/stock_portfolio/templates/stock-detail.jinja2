@@ -1,35 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="../static/reset.css">
-    <link rel="stylesheet" type="text/css" href="../static/base.css">
-    <link rel="stylesheet" type="text/css" href="../static/layout.css">
-    <link rel="stylesheet" type="text/css" href="../static/modules.css">
-    <title>Register Your Account</title>
-</head>
-<body>
-    <header>
-        <div class="site-title">
-            <h1>In Stock</h1>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="/">Home</a></li>
-                <li><a href="/auth">Register</a></li>
-                <li><a href="/stock">Stock</a></li>
-                <li><a href="/portfolio">Portfolio</a></li>
-                <li><a href="/portfolio/{symbol}">Portfolio Ticker</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <p>Stock Detail</p>
-    </main>
-    <!-- <footer>
-        <p>copyright 2018 | Tyler Fishbone</p>
-    </footer> -->
-</body>
-</html>
+{% extends "base.jinja2" %}
+
+{% block content %}
+
+<li>
+    <h3>Symbol: {{stock.symbol}}</h3>
+    <h3>Company Name: {{stock.companyName}}</h3>
+    <h3>Exchange: {{stock.exchange}}</h3>
+    <h3>Industry: {{stock.industry}}</h3>
+    <h3>Website: <a href="{{stock.website}}">{{stock.website}}</a></h3>
+    <h3>Description:</h3>
+    <p>{{stock.description}}</p>
+    <h3>CEO: {{stock.CEO}}</h3>
+    <h3>issueType: {{stock.issueType}}</h3>
+    <h3>sector: {{stock.sector}}</h3>
+    <hr>
+</li>
+
+{% endblock  %} %}
