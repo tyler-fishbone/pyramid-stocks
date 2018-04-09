@@ -11,10 +11,22 @@
     </fieldset>
 </form>
 
+
 {% if company %}
-<div>
-    {{company}}
-</div>
-{% end if %}
+<h3>Symbol: {{company.symbol}}</h3>
+<h3>Company Name: {{company.companyName}}</h3>
+<h3>Exchange: {{company.exchange}}</h3>
+<h3>Industry: {{company.industry}}</h3>
+<h3>Website: <a href="{{company.website}}">{{company.website}}</a></h3>
+<h3>Description:</h3>
+<p>{{company.description}}</p>
+<h3>CEO: {{company.CEO}}</h3>
+<h3>issueType: {{company.issueType}}</h3>
+<h3>sector: {{company.sector}}</h3>
+<form id='stock-add-form'action="{{request.route_url('portfolio')}}" method="POST">
+    <input type="hidden" name="symbol" value="{{company.symbol}}">
+    <button type="submit">Add to Portfolio</button>
+</form>
+{% endif %}
 
 {% endblock content %}

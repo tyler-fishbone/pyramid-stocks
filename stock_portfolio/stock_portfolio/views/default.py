@@ -3,6 +3,7 @@ from pyramid.view import view_config
 from ..sample_data import MOCK_DATA
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 import requests
+import json
 
 API_URL = 'https://api.iextrading.com/1.0'
 
@@ -43,10 +44,13 @@ def get_auth_view(request):
     return HTTPNotFound()
 
 
-@view_config(route_name='stock', renderer='../templates/stock-add.jinja2', request_method='GET')
+@view_config(route_name='stock', renderer='../templates/stock-add.jinja2')
 def get_stock_add_view(request):
+    # This code below is not run until form is submitted
+    
     if request.method == 'GET':
         try:
+            # print(request)
             symbol = request.GET['symbol']
 
         except KeyError:
@@ -54,17 +58,29 @@ def get_stock_add_view(request):
 
         response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
         data = response.json()
+        # print()
+        # print(data)
         return {'company': data}
+        
+    # else:
+    #     raise HTTPNotFound()
+        
 
-    else:
-        raise HTTPNotFound()
-
-
-@view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2', request_method='GET')
+@view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2')
 def get_portfolio_view(request):
-    return {
-        'stocks' : MOCK_DATA,
-    }
+    
+    if request.method == 'GET':
+        return {
+            'stocks': MOCK_DATA
+        }
+
+    if request.method == 'POST':
+        symbol = request.POST['symbol']
+        response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
+        data = response.json()
+        MOCK_DATA.append(data)
+        return {'stocks': MOCK_DATA}
+
 
 
 @view_config(route_name='stock-detail', renderer='../templates/stock-detail.jinja2', request_method='GET')
