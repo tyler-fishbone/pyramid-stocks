@@ -15,6 +15,7 @@ requires = [
     'pyramid_jinja2',
     'pyramid_retry',
     'pyramid_tm',
+    'requests', # We added this in manually
     'SQLAlchemy',
     'transaction',
     'zope.sqlalchemy',

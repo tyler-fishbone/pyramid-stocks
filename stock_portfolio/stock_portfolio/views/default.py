@@ -2,6 +2,11 @@ from pyramid.response import Response
 from pyramid.view import view_config
 from ..sample_data import MOCK_DATA
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+import requests
+import json
+
+API_URL = 'https://api.iextrading.com/1.0'
+
 # from sqlalchemy.exc import DBAPIError
 # from ..models import MyModel
 
@@ -9,7 +14,7 @@ from pyramid.httpexceptions import HTTPFound, HTTPNotFound
 def get_base_view(request):
     return Response('base view is functional')
 
-@view_config(route_name='home', renderer='../templates/base.jinja2', request_method='GET')
+@view_config(route_name='home', renderer='../templates/index.jinja2', request_method='GET')
 def get_home_view(request):
     return {}
     # return Response('get_home_view is functional')
@@ -39,16 +44,43 @@ def get_auth_view(request):
     return HTTPNotFound()
 
 
-@view_config(route_name='stock', renderer='../templates/stock-add.jinja2', request_method='GET')
+@view_config(route_name='stock', renderer='../templates/stock-add.jinja2')
 def get_stock_add_view(request):
-    return {}
+    # This code below is not run until form is submitted
+    
+    if request.method == 'GET':
+        try:
+            # print(request)
+            symbol = request.GET['symbol']
 
+        except KeyError:
+            return {}
 
-@view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2', request_method='GET')
+        response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
+        data = response.json()
+        # print()
+        # print(data)
+        return {'company': data}
+        
+    # else:
+    #     raise HTTPNotFound()
+        
+
+@view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2')
 def get_portfolio_view(request):
-    return {
-        'stocks' : MOCK_DATA,
-    }
+    
+    if request.method == 'GET':
+        return {
+            'stocks': MOCK_DATA
+        }
+
+    if request.method == 'POST':
+        symbol = request.POST['symbol']
+        response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
+        data = response.json()
+        MOCK_DATA.append(data)
+        return {'stocks': MOCK_DATA}
+
 
 
 @view_config(route_name='stock-detail', renderer='../templates/stock-detail.jinja2', request_method='GET')
@@ -59,3 +91,4 @@ def get_portfolio_symbol_view(request):
         if stock_item['symbol'] == stock:
             return {'stock' : stock_item}
     return {}
+
