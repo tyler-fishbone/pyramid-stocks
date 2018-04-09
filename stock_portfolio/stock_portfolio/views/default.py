@@ -1,14 +1,14 @@
 from pyramid.response import Response
 from pyramid.view import view_config
 from ..sample_data import MOCK_DATA
+from sqlalchemy.exc import DBAPIError
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from ..models import Stock
+from . import DB_ERR_MSG
 import requests
 import json
 
 API_URL = 'https://api.iextrading.com/1.0'
-
-# from sqlalchemy.exc import DBAPIError
-# from ..models import MyModel
 
 @view_config(route_name='base', renderer='../templates/base.jinja2', request_method='GET')
 def get_base_view(request):
@@ -70,10 +70,18 @@ def get_stock_add_view(request):
 def get_portfolio_view(request):
     
     if request.method == 'GET':
-        return {
-            'stocks': MOCK_DATA
-        }
+        try:
+            query = request.dbsession.query(Stock)
+            all_stocks = query.all()
+        except DBAPIError:
+            return DBAPIError(DB_ERR_MSG, content_type='text/plain', status=500)
+        
+        return {stocks: all_stocks}
+        # return {
+        #     'stocks': MOCK_DATA
+        # }
 
+    # need to change below method so it utlizes DB
     if request.method == 'POST':
         symbol = request.POST['symbol']
         response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
@@ -85,10 +93,21 @@ def get_portfolio_view(request):
 
 @view_config(route_name='stock-detail', renderer='../templates/stock-detail.jinja2', request_method='GET')
 def get_portfolio_symbol_view(request):
+
     stock = request.matchdict['symbol']
-    print('             {}'.format(stock))
-    for stock_item in MOCK_DATA:
-        if stock_item['symbol'] == stock:
-            return {'stock' : stock_item}
-    return {}
+    # print('             {}'.format(stock))
+
+    try:
+        query = request.dbsession.query(Stock)
+        stock_detail = query.filter(Stock.symbol == stock)[0] # can also use .first() for first item
+    except DBAPIError:
+        return DBAPIError(DB_ERR_MSG, content_type='text/plain', status=500)
+
+    return {'stock' : stock_detail}
+
+
+    # for stock_item in MOCK_DATA:
+    #     if stock_item['symbol'] == stock:
+    #         return {'stock' : stock_item}
+    # return {}
 
