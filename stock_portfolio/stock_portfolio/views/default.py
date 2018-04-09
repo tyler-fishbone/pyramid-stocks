@@ -13,7 +13,7 @@ API_URL = 'https://api.iextrading.com/1.0'
 def get_base_view(request):
     return Response('base view is functional')
 
-@view_config(route_name='home', renderer='../templates/base.jinja2', request_method='GET')
+@view_config(route_name='home', renderer='../templates/index.jinja2', request_method='GET')
 def get_home_view(request):
     return {}
     # return Response('get_home_view is functional')
