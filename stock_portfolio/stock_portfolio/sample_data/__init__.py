@@ -98,26 +98,7 @@ MOCK_DATA = [
     "issueType": "cs5",
     "sector": "Electronic5s"
     },
-    {
-    "symbol": "GOOG6",
-    "companyName": "Google6",
-    "exchange": "New York Stock Exchange6",
-    "industry": "Software6",
-    "website": "http://www.google.com6",
-    "description": "General Electric Co is a digital industrial company. It operates in various segments, including power and water, oil and gas, energy management, aviation, healthcare, transportation, appliances and lighting, and more.",
-    "CEO": "Sundar Pichai6",
-    "issueType": "cs6",
-    "sector": "Electronic6s"
-    },
-    {
-    "symbol": "GOOG7",
-    "companyName": "Google7",
-    "exchange": "New York Stock Exchange7",
-    "industry": "Software7",
-    "website": "http://www.google.com7",
-    "description": "General Electric Co is a digital industrial company. It operates in various segments, including power and water, oil and gas, energy management, aviation, healthcare, transportation, appliances and lighting, and more.",
-    "CEO": "Sundar Pichai7",
-    "issueType": "cs7",
-    "sector": "Electronic7s"
-    },
+{"symbol":"AMZN","companyName":"Amazon.com Inc.","exchange":"Nasdaq Global Select","industry":"Retail - Apparel & Specialty","website":"http://www.amazon.com","description":"Amazon.com Inc is an online retailer. The Company sells its products through the website which provides services, such as advertising services and co-branded credit card agreements. It also offers electronic devices like Kindle e-readers and Fire tablets.","CEO":"Jeffrey P. Bezos","issueType":"cs","sector":"Consumer Cyclical"
+},
+{"symbol":"LLL","companyName":"L3 Technologies Inc.","exchange":"New York Stock Exchange","industry":"Aerospace & Defense","website":"http://www.l3t.com","description":"L3 Technologies Inc is a provider of various communication and electronic systems and products used on military, homeland security and commercial platforms. It is also a contractor in aerospace systems, security and detection systems, and pilot training.","CEO":"Christopher E. Kubasik","issueType":"cs","sector":"Industrials"},
 ]

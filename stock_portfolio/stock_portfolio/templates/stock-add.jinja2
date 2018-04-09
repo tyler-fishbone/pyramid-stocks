@@ -3,12 +3,18 @@
 
 {% block content %}
 
-<form id="stock-search-form">
+<form id="stock-search-form" action="{{request.route_url('stock')}}" method="GET">
     <legend></legend>
     <fieldset>
-        <input type="text" placeholder="Search stocks here">
+        <input type="text" name="symbol" placeholder="Search stocks here with ticker e.g. MSFT">
         <button type="submit">Search</button>
     </fieldset>
 </form>
+
+{% if company %}
+<div>
+    {{company}}
+</div>
+{% end if %}
 
 {% endblock content %}
