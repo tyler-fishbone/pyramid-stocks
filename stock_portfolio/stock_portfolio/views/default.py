@@ -1,14 +1,14 @@
 from pyramid.response import Response
 from pyramid.view import view_config
 from ..sample_data import MOCK_DATA
+from sqlalchemy.exc import DBAPIError
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from ..models import Stock
+from . import DB_ERR_MSG
 import requests
 import json
 
 API_URL = 'https://api.iextrading.com/1.0'
-
-# from sqlalchemy.exc import DBAPIError
-# from ..models import MyModel
 
 @view_config(route_name='base', renderer='../templates/base.jinja2', request_method='GET')
 def get_base_view(request):
@@ -17,7 +17,6 @@ def get_base_view(request):
 @view_config(route_name='home', renderer='../templates/index.jinja2', request_method='GET')
 def get_home_view(request):
     return {}
-    # return Response('get_home_view is functional')
 
 
 @view_config(route_name='auth', renderer='../templates/auth.jinja2')
@@ -46,49 +45,77 @@ def get_auth_view(request):
 
 @view_config(route_name='stock', renderer='../templates/stock-add.jinja2')
 def get_stock_add_view(request):
-    # This code below is not run until form is submitted
     
     if request.method == 'GET':
         try:
-            # print(request)
             symbol = request.GET['symbol']
 
         except KeyError:
             return {}
 
-        response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
-        data = response.json()
-        # print()
-        # print(data)
-        return {'company': data}
-        
-    # else:
-    #     raise HTTPNotFound()
+        try:
+            response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
+            data = response.json()
+            return {'company': data}
+        except ValueError:
+            print('That stock does not exist')
+            return HTTPFound(location=request.route_url('stock'))
         
 
 @view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2')
 def get_portfolio_view(request):
     
     if request.method == 'GET':
-        return {
-            'stocks': MOCK_DATA
-        }
+        try:
+            query = request.dbsession.query(Stock)
+            all_stocks = query.all()
+        except DBAPIError:
+            return DBAPIError(DB_ERR_MSG, content_type='text/plain', status=500)
+        
+        return {'stocks': all_stocks}
 
+    # Get info from API
     if request.method == 'POST':
         symbol = request.POST['symbol']
         response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
         data = response.json()
-        MOCK_DATA.append(data)
-        return {'stocks': MOCK_DATA}
+
+        # Check if info already DB
+        my_object = request.dbsession.query(Stock).filter(Stock.symbol == data['symbol']).first()
+        if not my_object:
+            e = Stock(**data)
+            request.dbsession.add(e)
+            query = request.dbsession.query(Stock)
+            all_stocks = query.all()
+            return {'stocks': all_stocks}
+        else:
+            print('We you already have that in your database')
+            return HTTPFound(location=request.route_url('stock'))
 
 
 
 @view_config(route_name='stock-detail', renderer='../templates/stock-detail.jinja2', request_method='GET')
 def get_portfolio_symbol_view(request):
-    stock = request.matchdict['symbol']
-    print('             {}'.format(stock))
-    for stock_item in MOCK_DATA:
-        if stock_item['symbol'] == stock:
-            return {'stock' : stock_item}
-    return {}
+    
+    try:
+        stock = request.matchdict['symbol']
+    except IndexError:
+        return HTTPNotFound()
+
+    try:
+        query = request.dbsession.query(Stock)
+        stock_detail = query.filter(Stock.symbol == stock)[0] # can also use .first() for first item
+    except DBAPIError:
+        return DBAPIError(DB_ERR_MSG, content_type='text/plain', status=500)
+
+    return {'stock' : stock_detail}
+
+    # # Cool method querying another API
+    #     res = requests.get('https://pixabay.com/api?key={}&q={}'.format(
+    #         API_KEY, entry_detail.title.split(' ')[0]))
+
+    # for stock_item in MOCK_DATA:
+    #     if stock_item['symbol'] == stock:
+    #         return {'stock' : stock_item}
+    # return {}
 
