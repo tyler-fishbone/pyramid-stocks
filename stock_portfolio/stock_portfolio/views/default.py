@@ -3,6 +3,7 @@ from pyramid.view import view_config
 from ..sample_data import MOCK_DATA
 from sqlalchemy.exc import DBAPIError
 from pyramid.httpexceptions import HTTPFound, HTTPNotFound
+from pyramid.security import NO_PERMISSION_REQUIRED
 from ..models import Stock
 from . import DB_ERR_MSG
 import requests
@@ -16,31 +17,32 @@ def get_base_view(request):
 
 @view_config(route_name='home', renderer='../templates/index.jinja2', request_method='GET')
 def get_home_view(request):
+    # need to add permision here somehow
     return {}
 
 
-@view_config(route_name='auth', renderer='../templates/auth.jinja2')
-def get_auth_view(request):
-    if request.method == 'GET':
-        try:
-            username = request.GET['username']
-            password = request.GET['password']
-            print('User: {}, Pass: {}'.format(username, password))
+# @view_config(route_name='auth', renderer='../templates/auth.jinja2')
+# def get_auth_view(request):
+#     if request.method == 'GET':
+#         try:
+#             username = request.GET['username']
+#             password = request.GET['password']
+#             print('User: {}, Pass: {}'.format(username, password))
 
-            return HTTPFound(location=request.route_url('portfolio'))
+#             return HTTPFound(location=request.route_url('portfolio'))
 
-        except KeyError:
-            return {}
+#         except KeyError:
+#             return {}
     
-    if request.method == 'POST':
-        username = request.POST['username']
-        email = request.POST['email']
-        password = request.POST['password']
-        print('User: {}, Pass: {}, Email: {}'.format(username, password, email))
+#     if request.method == 'POST':
+#         username = request.POST['username']
+#         email = request.POST['email']
+#         password = request.POST['password']
+#         print('User: {}, Pass: {}, Email: {}'.format(username, password, email))
 
-        return HTTPFound(location=request.route_url('portfolio'))
+#         return HTTPFound(location=request.route_url('portfolio'))
 
-    return HTTPNotFound()
+#     return HTTPNotFound()
 
 
 @view_config(route_name='stock', renderer='../templates/stock-add.jinja2')

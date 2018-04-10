@@ -5,10 +5,8 @@ from pyramid import testing
 def dummy_request():
     return testing.DummyRequest()
 
-
 # @pytest.fixture
-# def dummy_auth_request():
-#     request = testing.DummyRequest(method="POST", params={'username': 'dummy', 'email': 't@g.co', 'password': '1234'})
+# def test_entry():
 
-#     return
 
+# def configuration(request):
