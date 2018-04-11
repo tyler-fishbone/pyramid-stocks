@@ -6,6 +6,7 @@
     <legend>Sign Up</legend>
     <fieldset>
         <h3></h3>
+        <input type="hidden" name="csrf_token" value="{{request.session.get_csrf_token()}}">
         <input type="text" placeholder="username" name="username" >
         <input type="text" placeholder="email" name="email">
         <input type="password" placeholder="password" name="password">
@@ -19,6 +20,7 @@
     <legend>Login</legend>
     <fieldset>
         <h3></h3>
+        <input type="hidden" name="csrf_token" value="{{request.session.get_csrf_token()}}">
         <input type="text" placeholder="username" name="username">
         <input type="password" placeholder="password" name="password">
         <button type="submit">Submit</button>

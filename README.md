@@ -10,5 +10,6 @@ Eventually this website will be deployed and it will be accessible via a provide
 
 ## Change Log
 
-Mon Apr 9 2018 - Database initialized
-Wed Apr 4 2018 - Initial scaffold created using pyramid
+Tue Apr 10 2018 - Authentication and Authorization added, testing extended
+Mon Apr 9  2018 - Database initialized
+Wed Apr 4  2018 - Initial scaffold created using pyramid
