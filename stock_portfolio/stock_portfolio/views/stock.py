@@ -32,7 +32,9 @@ def get_portfolio_view(request):
             return HTTPBadRequest()
         response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
         data = response.json()
-            
+    
+    # to grab userid
+    # account_id = request.authenticated_userid
 
         # Check if info already DB
         my_object = request.dbsession.query(Stock).filter(Stock.symbol == data['symbol']).first()
@@ -40,6 +42,7 @@ def get_portfolio_view(request):
             e = Stock(**data)
             request.dbsession.add(e)
             query = request.dbsession.query(Stock)
+            #filter here for the correct userid ******
             all_stocks = query.all()
             return {'stocks': all_stocks}
         else:

@@ -3,6 +3,7 @@ from sqlalchemy import (
     Integer,
     String,
     DateTime,
+    ForeignKey,
 )
 
 from .meta import Base
@@ -11,6 +12,7 @@ from .meta import Base
 class Stock(Base):
     __tablename__ = 'stocks'
     id = Column(Integer, primary_key = True)
+    account_id = Column(String, ForeignKey('accounts.username'), nullable=False)
     symbol = Column(String, nullable=False, unique=True)
     companyName = Column(String)
     exchange = Column(String)
