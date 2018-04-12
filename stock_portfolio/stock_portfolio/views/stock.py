@@ -11,6 +11,25 @@ import json
 
 API_URL = 'https://api.iextrading.com/1.0'
 
+@view_config(route_name='stock', renderer='../templates/stock-add.jinja2')
+def get_stock_add_view(request):
+    
+    if request.method == 'GET':
+        try:
+            symbol = request.GET['symbol']
+
+        except KeyError:
+            return {}
+
+        try:
+            response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
+            data = response.json()
+            return {'company': data}
+        except ValueError:
+            print('That stock does not exist')
+            return HTTPFound(location=request.route_url('stock'))
+
+
 @view_config(route_name='portfolio', renderer='../templates/portfolio.jinja2')
 def get_portfolio_view(request):
     
@@ -32,6 +51,7 @@ def get_portfolio_view(request):
             return HTTPBadRequest()
         response = requests.get(API_URL + '/stock/{}/company'.format(symbol))
         data = response.json()
+        data['account_id'] = request.authenticated_userid
     
     # to grab userid
     # account_id = request.authenticated_userid
