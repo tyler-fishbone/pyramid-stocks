@@ -99,6 +99,7 @@ def get_portfolio_symbol_view(request):
 
     try:
         query = request.dbsession.query(Stock)
+        # need to refactor the code below to correctly filter through the association table
         stock_detail = query.filter(Stock.account_id == request.authenticated_userid).filter(Stock.symbol == stock).one_or_none()
     
         if stock_detail is None:
