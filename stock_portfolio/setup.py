@@ -11,7 +11,7 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
 requires = [
     'cryptacular', # We added this in manually - passowrd management
     'plaster_pastedeploy',
-    'psycopg2', # We added this in manually
+    'psycopg2-binary', # We added this in manually
     'pyramid >= 1.9a',
     'pyramid_debugtoolbar',
     'pyramid_jinja2',
